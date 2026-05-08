@@ -29,18 +29,6 @@ function calculateBonusByProfit(index, total, seller) {
   } else {
     seller.bonus = 0.05 * profit;
   }
-  let arrProductSold = Object.entries(seller.products_sold);
-  let objProductSold = arrProductSold.map((value, index) => {
-    return {
-      sku: value[0],
-      quantity: value[1],
-    };
-  });
-  objProductSold.sort(
-    (quantityFirst, quantitySecond) =>
-      quantitySecond.quantity - quantityFirst.quantity,
-  );
-  seller.top_products = objProductSold.slice(0, 10);
 }
 
 /**
@@ -138,10 +126,21 @@ function analyzeSalesData(data, options) {
   );
 
   // @TODO: Назначение премий на основе ранжирования
-  // calculateBonusByProfit(sellerStats.length, sellerStats);
 
   sellerStats.forEach((seller, index) => {
-    calculateBonusByProfit(index, seller.length, seller);
+    calculateBonusByProfit(index, sellerStats.length, seller);
+    let arrProductSold = Object.entries(seller.products_sold);
+    let objProductSold = arrProductSold.map((value, index) => {
+      return {
+        sku: value[0],
+        quantity: value[1],
+      };
+    });
+    objProductSold.sort(
+      (quantityFirst, quantitySecond) =>
+        quantitySecond.quantity - quantityFirst.quantity,
+    );
+    seller.top_products = objProductSold.slice(0, 10);
   });
 
   // @TODO: Подготовка итоговой коллекции с нужными полями
