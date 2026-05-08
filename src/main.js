@@ -17,31 +17,30 @@ function calculateSimpleRevenue(purchase, _product) {
  * @param seller карточка продавца
  * @returns {number}
  */
-function calculateBonusByProfit(total, sellerList) {
+function calculateBonusByProfit(index, total, seller) {
+  const { profit } = seller;
   // @TODO: Расчет бонуса от позиции в рейтинге
-  sellerList.forEach((seller, index) => {
-    if (index === 0) {
-      seller.bonus = 0.15 * seller.profit;
-    } else if (index === 1 || index == 2) {
-      seller.bonus = 0.1 * seller.profit;
-    } else if (index === total - 1) {
-      seller.bonus = 0;
-    } else {
-      seller.bonus = 0.05 * seller.profit;
-    }
-    let arrProductSold = Object.entries(seller.products_sold);
-    let objProductSold = arrProductSold.map((value, index) => {
-      return {
-        sku: value[0],
-        quantity: value[1],
-      };
-    });
-    objProductSold.sort(
-      (quantityFirst, quantitySecond) =>
-        quantitySecond.quantity - quantityFirst.quantity,
-    );
-    seller.top_products = objProductSold.slice(0, 10);
+  if (index === 0) {
+    seller.bonus = 0.15 * profit;
+  } else if (index === 1 || index == 2) {
+    seller.bonus = 0.1 * profit;
+  } else if (index === total - 1) {
+    seller.bonus = 0;
+  } else {
+    seller.bonus = 0.05 * profit;
+  }
+  let arrProductSold = Object.entries(seller.products_sold);
+  let objProductSold = arrProductSold.map((value, index) => {
+    return {
+      sku: value[0],
+      quantity: value[1],
+    };
   });
+  objProductSold.sort(
+    (quantityFirst, quantitySecond) =>
+      quantitySecond.quantity - quantityFirst.quantity,
+  );
+  seller.top_products = objProductSold.slice(0, 10);
 }
 
 /**
@@ -139,7 +138,11 @@ function analyzeSalesData(data, options) {
   );
 
   // @TODO: Назначение премий на основе ранжирования
-  calculateBonusByProfit(sellerStats.length, sellerStats);
+  // calculateBonusByProfit(sellerStats.length, sellerStats);
+
+  sellerStats.forEach((seller, index) => {
+    calculateBonusByProfit(index, seller.length, seller);
+  });
 
   // @TODO: Подготовка итоговой коллекции с нужными полями
   return sellerStats.map((seller) => ({
