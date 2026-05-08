@@ -17,7 +17,7 @@ function calculateSimpleRevenue(purchase, _product) {
  * @param seller карточка продавца
  * @returns {number}
  */
-function calculateBonusByProfit(total, sellerList) {
+function calculateBonusByProfit(index, total, sellerList) {
   // @TODO: Расчет бонуса от позиции в рейтинге
   sellerList.forEach((seller, index) => {
     if (index === 0) {
@@ -139,7 +139,7 @@ function analyzeSalesData(data, options) {
   );
 
   // @TODO: Назначение премий на основе ранжирования
-  calculateBonusByProfit(sellerStats.length, sellerStats);
+  calculateBonusByProfit(undefined, sellerStats.length, sellerStats);
 
   // @TODO: Подготовка итоговой коллекции с нужными полями
   return sellerStats.map((seller) => ({
